@@ -32,7 +32,7 @@ docs: [docs]
 chore: [chore, ci, build, deps]
 ```
 
-Then it generates one template per kind in `.github/PULL_REQUEST_TEMPLATE/`. If you already have a template, its sections are kept as your house style in every kind. You review both before anything is committed.
+Then it generates one template per kind in `.github/PULL_REQUEST_TEMPLATE/`. If you already have a template, its sections are kept as your house style in every kind. Templates come in English and Japanese, matched to the language of your recent PRs and commits. You review both before anything is committed.
 
 ## How it picks the kind
 

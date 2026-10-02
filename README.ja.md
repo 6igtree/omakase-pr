@@ -4,9 +4,9 @@
 
 **PRテンプレートは、おまかせで。**
 
-GitHub ではPRテンプレートを複数置けますが、PRを作るときに[選ぶ手段がありません](https://github.com/orgs/community/discussions/146146)。そのため、多くのチームはどの変更にもしっくりこないテンプレートを1つだけ使っています。
+GitHub ではPRテンプレートを複数置けますが、PRを作るときに[選ぶ手段がありません](https://github.com/orgs/community/discussions/146146)。結局、バグ修正にも新機能にも同じテンプレートを使うことになりがちです。
 
-omakase-pr は Claude Code と Codex 向けのskillです。ブランチ名、コミット、差分を読んで変更の種類に合うテンプレートを選び、中身を埋めて `gh pr create` でPRを作ります。選ぶのも書くのも、板前におまかせです。
+omakase-pr は Claude Code と Codex 向けのskillです。ブランチ名やコミット、差分から変更の種類を見分けて、合うテンプレートを選びます。中身を埋めたら、`gh pr create` でPRを作るところまで進めます。選ぶのも書くのも、板前におまかせです。
 
 ## 使うとこうなる
 
@@ -17,7 +17,7 @@ Opened https://github.com/acme/shop/pull/412
 Kind: fix, from the branch name fix/login-timeout.
 ```
 
-本文は `.github/PULL_REQUEST_TEMPLATE/fix.md` に沿って、バグの内容、原因、修正、テストの方法を埋めます。チェックボックスにチェックを入れるのは、根拠があるときだけです。実行していないテストを「実行済み」と書くことはありません。
+本文は `.github/PULL_REQUEST_TEMPLATE/fix.md` の見出しに沿って埋まります。不具合の内容と原因、修正内容、テストの順です。チェックボックスにチェックを入れるのは根拠があるときだけで、実行していないテストを「実行済み」と書くことはありません。
 
 ## 導入時の設定
 
@@ -32,7 +32,7 @@ docs: [docs]
 chore: [chore, ci, build, deps]
 ```
 
-続けて、`.github/PULL_REQUEST_TEMPLATE/` に種類ごとのテンプレートを作ります。すでにテンプレートがあれば、その見出しをチームの書き方として全種類に引き継ぎます。どちらも、コミットする前に内容を確認できます。
+続けて、`.github/PULL_REQUEST_TEMPLATE/` に種類ごとのテンプレートを作ります。すでにあるテンプレートの見出しは、チームの書き方として全種類に引き継がれます。言語は最近のPRやコミットに合わせるので、日本語のチームなら日本語版です。設定ファイルもテンプレートも、コミットする前に中身を確認できます。
 
 ## 種類の決め方
 
