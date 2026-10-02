@@ -53,9 +53,13 @@ the PR the user asked for.
      `docs/` or the repo root), treat its sections as house style: keep them
      in every kind, and add the kind-specific sections from this skill's
      `templates/` directory.
-   - If it has none, copy this skill's `templates/<kind>.md`. For a kind with
+   - If it has none, copy this skill's default templates. For a kind with
      no default, write a short template with What, Why, and Testing.
-   - Write prose in the language the existing templates or recent PRs use.
+   - Pick the language from the existing templates, recent PR titles and
+     bodies, and commit subjects. If they are mostly Japanese, use
+     `templates/ja/<kind>.md`; otherwise use `templates/<kind>.md` (English).
+     For another language, translate the English defaults. If the user names
+     a language, use that.
 4. **Write the files** and show the user the list. Do not commit unless they
    ask. Leave any existing single template in place; the GitHub web UI still
    uses it.
@@ -87,8 +91,8 @@ the PR the user asked for.
      so. Otherwise leave it unticked. Never claim testing that did not happen.
    - Link an issue only if its number appears in the branch name, commits, or
      the user's message.
-   - Write for a reviewer: short, concrete, file paths where useful. No
-     marketing tone.
+   - Write in the language of the template. Write for a reviewer: short,
+     concrete, file paths where useful. No marketing tone.
 4. **Write the title** in the style of recent merged PR titles in this repo.
    If they use a prefix such as `fix:` or `[Fix]`, use it.
 5. **Create it:**
