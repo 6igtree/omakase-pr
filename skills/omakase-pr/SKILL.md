@@ -44,7 +44,8 @@ with `gh pr create`. Everything else is plain `gh`.
   name is the kind.
 
 If `.github/omakase-pr.yml` is missing, run setup first, then continue with
-the PR the user asked for.
+the PR the user asked for. In preview, do not run setup: use the default
+prefixes and this skill's templates, and say that setup has not run yet.
 
 ## Setup (`omakase init`, or first use)
 
@@ -61,8 +62,8 @@ the PR the user asked for.
 3. **Generate templates**, one per kind:
    - If the repo has templates in `.github/PULL_REQUEST_TEMPLATE/`, keep them
      and map each to a kind. Only create the missing ones.
-   - If it has a single `.github/pull_request_template.md` (or the same file in
-     `docs/` or the repo root), treat its sections as house style: keep them
+   - If it has a single `pull_request_template.md` (any letter case, in
+     `.github/`, `docs/`, or the repo root), treat its sections as house style: keep them
      in every kind, and add the kind-specific sections from this skill's
      `templates/` directory.
    - If it has none, copy this skill's default templates. For a kind with
@@ -76,20 +77,29 @@ the PR the user asked for.
    ask. Leave any existing single template in place; the GitHub web UI still
    uses it.
 
+When setup runs as part of opening a PR, the files it wrote are not part of
+that PR. Leave them uncommitted, never add them to the PR's commits, and tell
+the user they can commit them separately.
+
 ## Open a PR
 
-1. **Check the branch.** If there are uncommitted changes, ask whether to
-   commit them first. If the branch has no upstream, push it with
-   `git push -u origin HEAD`. Find the base branch: the user's choice, else
-   the repo's default branch.
+1. **Check the branch.**
+   - If a PR already exists for this branch (`gh pr view --json url`), do not
+     create another. Ask whether to update its title and body instead, and if
+     yes, use `gh pr edit` with the same title and body rules.
+   - If there are uncommitted changes other than files written by setup, ask
+     whether to commit them first.
+   - If the branch has no upstream, push it with `git push -u origin HEAD`.
+   - Base branch: the user's choice, else the repo's default branch
+     (`gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`).
 2. **Pick the kind,** stopping at the first that gives a clear answer:
    1. The kind the user named ("omakase fix").
    2. The branch name, matched against the prefixes.
    3. The commit subjects on this branch (`git log <base>..HEAD --format=%s`),
       matched against the prefixes. Use the kind most commits share.
    4. The diff itself: only docs touched means docs; only dependency, CI, or
-      config files means chore; tests plus a small code change near a bug
-      report means fix.
+      config files means chore; no new public behavior and tests unchanged
+      means refactor. Do not guess between feature and fix from the diff alone.
    If it is still unclear, ask once, offering the two likeliest kinds.
 3. **Fill the template** from the diff (`git diff <base>...HEAD`) and the
    commits:
@@ -101,8 +111,9 @@ the PR the user asked for.
      claims a result ("fails without this fix", "tests pass", "tested
      manually") needs a command you ran in this session, or the user saying
      so. Otherwise leave it unticked. Never claim testing that did not happen.
-   - Link an issue only if its number appears in the branch name, commits, or
-     the user's message.
+   - Mention an issue only if its number appears in the branch name, commits,
+     or the user's message. Write it as a plain reference (`#123`), never with
+     a closing keyword (`Closes`, `Fixes`, `Resolves`).
    - Write in the language of the template, for a reviewer who has one
      minute. See "Body" under "Writing" below.
 4. **Write the title.** See "Title" under "Writing" below.
@@ -160,17 +171,20 @@ The body is read once, quickly, before the reviewer opens the diff. It must
 give them the point and where to look, not retell the diff.
 
 - Lead each section with its most important point.
-- Each section: one to three sentences, or up to three bullets. The whole body
-  should take under a minute to read: about 150 words in English, or about
-  400 characters in Japanese, excluding headings and checkboxes.
+- Each section: one to three sentences, or up to three bullets. Checklists
+  that come from the template stay as they are. The whole body should take
+  under a minute to read: about 150 words in English, or about 400 characters
+  in Japanese, excluding headings and checkboxes.
 - Explain why and what to look at. Do not list every changed file or restate
   code line by line; the diff already shows that.
 - Do not repeat the title or the same fact in two sections.
 - No filler: no "This PR...", no "In this pull request we...", no summary of
   the summary.
 - Delete optional sections that do not apply instead of writing "N/A".
-- Never invent the reason. The why (Why, Background, Bug) must come from an
-  issue, commit messages, code comments, or the user. If none of them say it,
+- Never invent the reason. Sections that state why the change was made (Why,
+  Background, Motivation, 背景, 理由, 目的) must come from an issue, commit
+  messages, code comments, or the user. What was broken can be read from the
+  diff and tests; why the change was wanted cannot. If none of them say it,
   ask the user once in one line before creating the PR. In preview, leave
   `<!-- TODO: why -->` in that section and say so.
 
