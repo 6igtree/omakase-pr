@@ -1,6 +1,6 @@
 {
   "name": "omakase-pr",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Picks the right PR template for each kind of change, fills it from your diff, and opens the PR.",
   "author": {
     "name": "6igtree",

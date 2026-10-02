@@ -19,15 +19,25 @@ with `gh pr create`. Everything else is plain `gh`.
 
 ## Files in the repo
 
-- `.github/omakase-pr.yml`: which prefixes map to which kind.
+- `.github/omakase-pr.yml`: which prefixes map to which kind, and the PR
+  fields to set. Everything except `kinds` is optional and empty by default.
 
   ```yaml
   # kind: prefixes matched against branch names and commit subjects
-  feature: [feat, feature]
-  fix: [fix, bugfix, hotfix]
-  refactor: [refactor]
-  docs: [docs]
-  chore: [chore, ci, build, deps]
+  kinds:
+    feature: [feat, feature]
+    fix: [fix, bugfix, hotfix]
+    refactor: [refactor]
+    docs: [docs]
+    chore: [chore, ci, build, deps]
+
+  # Optional. Uncomment to set these on every PR.
+  # assignees: ["@me"]
+  # labels:          # kind: labels
+  #   feature: [enhancement]
+  #   fix: [bug]
+  # projects: [Roadmap]
+  # milestone: v1.2
   ```
 
 - `.github/PULL_REQUEST_TEMPLATE/<kind>.md`: one template per kind. The file
@@ -45,8 +55,9 @@ the PR the user asked for.
    `feat/`, `fix-`, `fix:`, `[Bug]`.
 2. **Propose the prefix config.** Start from the default above, add prefixes
    found in step 1 to the matching kind, and add a new kind only if the repo
-   clearly uses one (for example `perf` or `release`). Show it to the user and
-   apply their edits.
+   clearly uses one (for example `perf` or `release`). Include the optional
+   fields commented out, exactly as shown above, so the user can find them.
+   Do not fill them in. Show the file to the user and apply their edits.
 3. **Generate templates**, one per kind:
    - If the repo has templates in `.github/PULL_REQUEST_TEMPLATE/`, keep them
      and map each to a kind. Only create the missing ones.
@@ -102,16 +113,32 @@ the PR the user asked for.
    gh pr create --base <base> --title "<title>" --body-file <tmp file>
    ```
 
-   Pass through anything the user asked for: `--draft`, `--reviewer`,
-   `--assignee`, `--label`. If a label named exactly like the kind exists
-   (`gh label list`), add it.
+   Add PR fields from the config, then from the user's words for this PR.
+   The user's words win over the config. Set nothing that neither provides.
+
+   | Field | Flag | From the config |
+   | --- | --- | --- |
+   | Assignees | `--assignee` | `assignees` |
+   | Labels | `--label` | `labels.<kind>` |
+   | Projects | `--project` | `projects` |
+   | Milestone | `--milestone` | `milestone` |
+   | Reviewers | `--reviewer` | (user's words only) |
+   | Draft | `--draft` | (user's words only) |
+
+   If a label, project, or milestone does not exist, `gh` fails. Before
+   retrying, run `gh pr view` to make sure no PR was created for this branch.
+   Then create it without that field and tell the user which one was skipped
+   and why.
+   Adding to a project needs the `project` scope; if it is missing, suggest
+   `gh auth refresh -s project`.
 6. **Report** the PR URL, the kind chosen, and why (for example: "fix, from
    the branch name fix/login-timeout"), in one or two lines.
 
 ## Preview (`omakase preview`)
 
 Do steps 1-4 of "Open a PR", but do not push or create anything. Show the
-kind, the reason, the title, and the filled body.
+kind, the reason, the title, the PR fields that would be set, and the filled
+body.
 
 ## Never
 
