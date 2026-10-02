@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "omakase-pr",
+  "description": "PR templates, chosen for you.",
+  "owner": {
+    "name": "6igtree",
+    "url": "https://github.com/6igtree"
+  },
+  "plugins": [
+    {
+      "name": "omakase-pr",
+      "description": "Picks the right PR template for each kind of change, fills it from your diff, and opens the PR with gh. Sets up prefixes and per-kind templates on first use.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}
