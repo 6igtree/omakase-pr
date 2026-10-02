@@ -25,12 +25,23 @@ The first time you run it, omakase-pr looks at your recent branch names and comm
 
 ```yaml
 # .github/omakase-pr.yml
-feature: [feat, feature]
-fix: [fix, bugfix, hotfix]
-refactor: [refactor]
-docs: [docs]
-chore: [chore, ci, build, deps]
+kinds:
+  feature: [feat, feature]
+  fix: [fix, bugfix, hotfix]
+  refactor: [refactor]
+  docs: [docs]
+  chore: [chore, ci, build, deps]
+
+# Optional. Uncomment to set these on every PR.
+# assignees: ["@me"]
+# labels:
+#   feature: [enhancement]
+#   fix: [bug]
+# projects: [Roadmap]
+# milestone: v1.2
 ```
+
+Assignees, labels (per kind), projects, and a milestone are left empty. Uncomment the ones you want, and every PR gets them.
 
 Then it generates one template per kind in `.github/PULL_REQUEST_TEMPLATE/`. If you already have a template, its sections are kept as your house style in every kind. Templates come in English and Japanese, matched to the language of your recent PRs and commits. You review both before anything is committed.
 
@@ -82,6 +93,8 @@ Add whatever you need in plain words, in any combination:
 omakase fix, as a draft
 omakase with reviewer @alice and label urgent
 ```
+
+What you say for one PR wins over the config.
 
 `omakase init` runs the setup again. In Claude Code, `/omakase-pr` works too.
 

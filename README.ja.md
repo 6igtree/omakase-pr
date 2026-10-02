@@ -25,12 +25,23 @@ Kind: fix, from the branch name fix/login-timeout.
 
 ```yaml
 # .github/omakase-pr.yml
-feature: [feat, feature]
-fix: [fix, bugfix, hotfix]
-refactor: [refactor]
-docs: [docs]
-chore: [chore, ci, build, deps]
+kinds:
+  feature: [feat, feature]
+  fix: [fix, bugfix, hotfix]
+  refactor: [refactor]
+  docs: [docs]
+  chore: [chore, ci, build, deps]
+
+# 任意。コメントを外すと、すべてのPRに設定される
+# assignees: ["@me"]
+# labels:
+#   feature: [enhancement]
+#   fix: [bug]
+# projects: [Roadmap]
+# milestone: v1.2
 ```
+
+担当者（Assignees）、種類ごとのラベル、プロジェクト、マイルストーンは空のままです。使いたいものだけコメントを外せば、すべてのPRに設定されます。
 
 続けて、`.github/PULL_REQUEST_TEMPLATE/` に種類ごとのテンプレートを作ります。すでにあるテンプレートの見出しは、チームの書き方として全種類に引き継がれます。言語は最近のPRやコミットに合わせるので、日本語のチームなら日本語版です。設定ファイルもテンプレートも、コミットする前に中身を確認できます。
 
@@ -83,6 +94,8 @@ omakase
 omakase fix をドラフトで
 omakase レビュアーは @alice、ラベルは urgent で
 ```
+
+その場で言ったことは、設定ファイルより優先されます。
 
 `omakase init` で導入時の設定をやり直せます。Claude Code では `/omakase-pr` でも呼び出せます。
 
