@@ -71,11 +71,6 @@ Requires the [GitHub CLI](https://cli.github.com/) (`gh`), logged in.
 | `omakase-pr preview` | Shows the kind, title, and body without pushing or creating anything. |
 | `omakase-pr init` | Runs the setup again. |
 
-## See also
-
-- [senpai](https://github.com/6igtree/senpai): the more you code with your agent, the more you grow as an engineer.
-- [nit](https://github.com/6igtree/nit): your agent, now an English-speaking teammate.
-
 ## License
 
 MIT

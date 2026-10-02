@@ -73,11 +73,6 @@ mkdir -p ~/.agents/skills && cp -r /tmp/omakase-pr/skills/omakase-pr ~/.agents/s
 | `omakase-pr preview` | push も作成もせず、種類、タイトル、本文だけを見せる |
 | `omakase-pr init` | 導入時の設定をやり直す |
 
-## 関連
-
-- [senpai](https://github.com/6igtree/senpai)：エージェントと書くほど、エンジニアとして成長する。
-- [nit](https://github.com/6igtree/nit)：エージェントが、英語で話す同僚になる。
-
 ## ライセンス
 
 MIT
