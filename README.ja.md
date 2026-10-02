@@ -65,13 +65,26 @@ mkdir -p ~/.agents/skills && cp -r /tmp/omakase-pr/skills/omakase-pr ~/.agents/s
 
 ## 使い方
 
-| 言うこと | 動き |
-| --- | --- |
-| `omakase` | 合うテンプレートでPRを作る。初回は設定から始める |
-| `omakase fix` | 種類を指定してPRを作る |
-| `omakase draft` | ドラフトで作る。レビュアーやラベルの指定もできる |
-| `omakase-pr preview` | push も作成もせず、種類、タイトル、本文だけを見せる |
-| `omakase-pr init` | 導入時の設定をやり直す |
+最初は、何も作らずに中身だけ確かめられます。
+
+```
+omakase preview
+```
+
+種類とタイトル、本文が表示されるだけで、push もしません。内容がよければ、そのままPRを作ります。
+
+```
+omakase
+```
+
+必要なことは、普段の言葉で自由に付け足せます。
+
+```
+omakase fix をドラフトで
+omakase レビュアーは @alice、ラベルは urgent で
+```
+
+`omakase init` で導入時の設定をやり直せます。Claude Code では `/omakase-pr` でも呼び出せます。
 
 ## ライセンス
 
