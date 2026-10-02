@@ -63,9 +63,9 @@ prefixes and this skill's templates, and say that setup has not run yet.
    - If the repo has templates in `.github/PULL_REQUEST_TEMPLATE/`, keep them
      and map each to a kind. Only create the missing ones.
    - If it has a single `pull_request_template.md` (any letter case, in
-     `.github/`, `docs/`, or the repo root), treat its sections as house style: keep them
-     in every kind, and add the kind-specific sections from this skill's
-     `templates/` directory.
+     `.github/`, `docs/`, or the repo root), treat its sections as house
+     style: keep them in every kind's template, and add the kind-specific
+     sections from this skill's `templates/` directory.
    - If it has none, copy this skill's default templates. For a kind with
      no default, write a short template with What, Why, and Testing.
    - Pick the language from the existing templates, recent PR titles and
@@ -77,7 +77,7 @@ prefixes and this skill's templates, and say that setup has not run yet.
    ask. Leave any existing single template in place; the GitHub web UI still
    uses it.
 
-When setup runs as part of opening a PR, the files it wrote are not part of
+When setup runs as part of opening a PR, the files it writes stay out of
 that PR. Leave them uncommitted, never add them to the PR's commits, and tell
 the user they can commit them separately.
 
@@ -98,8 +98,9 @@ the user they can commit them separately.
    3. The commit subjects on this branch (`git log <base>..HEAD --format=%s`),
       matched against the prefixes. Use the kind most commits share.
    4. The diff itself: only docs touched means docs; only dependency, CI, or
-      config files means chore; no new public behavior and tests unchanged
-      means refactor. Do not guess between feature and fix from the diff alone.
+      config files means chore; if no public behavior changes and the tests
+      are untouched, it is a refactor. Do not guess between feature and fix
+      from the diff alone.
    If it is still unclear, ask once, offering the two likeliest kinds.
 3. **Fill the template** from the diff (`git diff <base>...HEAD`) and the
    commits:
@@ -124,7 +125,8 @@ the user they can commit them separately.
    ```
 
    Add PR fields from the config, then from the user's words for this PR.
-   The user's words win over the config. Set nothing that neither provides.
+   The user's words win over the config. If neither sets a field, leave it
+   empty.
 
    | Field | Flag | From the config |
    | --- | --- | --- |
@@ -181,12 +183,12 @@ give them the point and where to look, not retell the diff.
 - No filler: no "This PR...", no "In this pull request we...", no summary of
   the summary.
 - Delete optional sections that do not apply instead of writing "N/A".
-- Never invent the reason. Sections that state why the change was made (Why,
-  Background, Motivation, 背景, 理由, 目的) must come from an issue, commit
-  messages, code comments, or the user. What was broken can be read from the
-  diff and tests; why the change was wanted cannot. If none of them say it,
-  ask the user once in one line before creating the PR. In preview, leave
-  `<!-- TODO: why -->` in that section and say so.
+- Never invent the reason. What goes in sections that state why the change
+  was made (Why, Background, Motivation, 背景, 理由, 目的) must come from an
+  issue, commit messages, code comments, or the user. What was broken can be
+  read from the diff and tests; why the change was wanted cannot. If none of
+  them say it, ask the user once in one line before creating the PR. In
+  preview, leave `<!-- TODO: why -->` in that section and say so.
 
 Before showing or creating the PR, reread the title and body once and cut
 anything a reviewer would not miss.
