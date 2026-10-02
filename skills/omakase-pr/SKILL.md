@@ -5,9 +5,10 @@ description: >
   (feature, fix, refactor, docs, chore, or the repo's own kinds), filled in
   from the diff and commits, using `gh pr create`. On first use in a repo,
   sets up a prefix config and per-kind templates under
-  .github/PULL_REQUEST_TEMPLATE/. Use when the user says "omakase", "omakase
-  pr", "open a PR", "create a PR", "make a pull request", "omakase-pr init",
-  "omakase-pr preview", or invokes /omakase-pr.
+  .github/PULL_REQUEST_TEMPLATE/. Use when the user says "omakase" (alone or
+  followed by options such as "omakase fix", "omakase preview", "omakase
+  init", "omakase as a draft"), "omakase pr", "open a PR", "create a PR",
+  "make a pull request", or invokes /omakase-pr.
 ---
 
 # omakase-pr
@@ -35,7 +36,7 @@ with `gh pr create`. Everything else is plain `gh`.
 If `.github/omakase-pr.yml` is missing, run setup first, then continue with
 the PR the user asked for.
 
-## Setup (`omakase-pr init`, or first use)
+## Setup (`omakase init`, or first use)
 
 1. **Learn the repo's habits.** Look at recent branch names
    (`gh pr list --state merged --limit 50 --json headRefName,title` if
@@ -107,7 +108,7 @@ the PR the user asked for.
 6. **Report** the PR URL, the kind chosen, and why (for example: "fix, from
    the branch name fix/login-timeout"), in one or two lines.
 
-## Preview (`omakase-pr preview`)
+## Preview (`omakase preview`)
 
 Do steps 1-4 of "Open a PR", but do not push or create anything. Show the
 kind, the reason, the title, and the filled body.

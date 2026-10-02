@@ -63,13 +63,27 @@ Requires the [GitHub CLI](https://cli.github.com/) (`gh`), logged in.
 
 ## Usage
 
-| Say | What happens |
-| --- | --- |
-| `omakase` | Opens a PR with the right template. Runs setup first if needed. |
-| `omakase fix` | Same, with the kind you choose. |
-| `omakase draft` | Opens it as a draft. Reviewers and labels work too. |
-| `omakase-pr preview` | Shows the kind, title, and body without pushing or creating anything. |
-| `omakase-pr init` | Runs the setup again. |
+Try it without creating anything first:
+
+```
+omakase preview
+```
+
+It shows the kind, the title, and the body. Nothing is pushed.
+When it looks right, open the PR:
+
+```
+omakase
+```
+
+Add whatever you need in plain words, in any combination:
+
+```
+omakase fix, as a draft
+omakase with reviewer @alice and label urgent
+```
+
+`omakase init` runs the setup again. In Claude Code, `/omakase-pr` works too.
 
 ## License
 
