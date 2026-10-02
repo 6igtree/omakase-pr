@@ -19,6 +19,8 @@ Kind: fix, from the branch name fix/login-timeout.
 
 The body follows `.github/PULL_REQUEST_TEMPLATE/fix.md`: the bug, the root cause, the fix, and how it was tested. Checkboxes are ticked only when there is evidence, like tests in the diff. It never claims testing that did not happen.
 
+The title says what changed in under 60 characters, not which files you touched. The body takes under a minute to read: the point and where to look, not a retelling of the diff. If nothing says why the change was made, it asks you instead of making up a reason.
+
 ## Setup, once per repo
 
 The first time you run it, omakase-pr looks at your recent branch names and commit messages and proposes a prefix config:
