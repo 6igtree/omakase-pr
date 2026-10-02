@@ -103,10 +103,9 @@ the PR the user asked for.
      so. Otherwise leave it unticked. Never claim testing that did not happen.
    - Link an issue only if its number appears in the branch name, commits, or
      the user's message.
-   - Write in the language of the template. Write for a reviewer: short,
-     concrete, file paths where useful. No marketing tone.
-4. **Write the title** in the style of recent merged PR titles in this repo.
-   If they use a prefix such as `fix:` or `[Fix]`, use it.
+   - Write in the language of the template, for a reviewer who has one
+     minute. See "Body" under "Writing" below.
+4. **Write the title.** See "Title" under "Writing" below.
 5. **Create it:**
 
    ```sh
@@ -133,6 +132,50 @@ the PR the user asked for.
    `gh auth refresh -s project`.
 6. **Report** the PR URL, the kind chosen, and why (for example: "fix, from
    the branch name fix/login-timeout"), in one or two lines.
+
+## Writing
+
+### Title
+
+The title is the one line a reviewer reads in a list of PRs. It must say what
+this PR changes, so they can tell it apart from every other PR.
+
+- Say what changes for the user or the system, not which files you touched.
+  Good: `fix: return 401 when the session has expired`.
+  Bad: `fix: update auth.py`, `fix: bug fix`, `Login changes`.
+- One change, one title. If you need "and" to describe it, name the main
+  change and leave the rest to the body.
+- At most 60 characters in English, about 35 characters in Japanese,
+  including any prefix.
+- Follow the repo's style from recent merged PR titles: prefix (`fix:`,
+  `[Fix]`), capitalization, and mood. With no history, use the
+  conventional-commit form `<kind>: <summary>` in the imperative
+  ("add", not "added"). No trailing period.
+- Do not copy a commit subject blindly. With several commits, summarize the
+  whole branch.
+
+### Body
+
+The body is read once, quickly, before the reviewer opens the diff. It must
+give them the point and where to look, not retell the diff.
+
+- Lead each section with its most important point.
+- Each section: one to three sentences, or up to three bullets. The whole body
+  should take under a minute to read: about 150 words in English, or about
+  400 characters in Japanese, excluding headings and checkboxes.
+- Explain why and what to look at. Do not list every changed file or restate
+  code line by line; the diff already shows that.
+- Do not repeat the title or the same fact in two sections.
+- No filler: no "This PR...", no "In this pull request we...", no summary of
+  the summary.
+- Delete optional sections that do not apply instead of writing "N/A".
+- Never invent the reason. The why (Why, Background, Bug) must come from an
+  issue, commit messages, code comments, or the user. If none of them say it,
+  ask the user once in one line before creating the PR. In preview, leave
+  `<!-- TODO: why -->` in that section and say so.
+
+Before showing or creating the PR, reread the title and body once and cut
+anything a reviewer would not miss.
 
 ## Preview (`omakase preview`)
 
