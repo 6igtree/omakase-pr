@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "omakase-pr",
-      "description": "Picks the right PR template for each kind of change, fills it from your diff, and opens the PR with gh. Sets up prefixes and per-kind templates on first use.",
+      "description": "Picks the right PR template for each kind of change, fills it from your diff, sets the assignee and labels, and opens the PR with gh. Uses your repo's templates as they are.",
       "source": "./",
       "category": "productivity"
     }

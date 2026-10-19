@@ -2,108 +2,119 @@
 name: omakase-pr
 description: >
   Opens a pull request with the right template for the kind of change
-  (feature, fix, refactor, docs, chore, or the repo's own kinds), filled in
-  from the diff and commits, using `gh pr create`. On first use in a repo,
-  sets up a prefix config and per-kind templates under
-  .github/PULL_REQUEST_TEMPLATE/. Use when the user says "omakase" (alone or
-  followed by options such as "omakase fix", "omakase preview", "omakase
-  init", "omakase as a draft"), "omakase pr", "open a PR", "create a PR",
-  "make a pull request", or invokes /omakase-pr.
+  (feature, fix, refactor, docs, chore, or the repo's own templates), fills
+  it in from the diff and commits, and sets the assignee and labels, using
+  `gh pr create`. Uses the repo's existing templates as they are, and brings
+  its own only when the repo has none. Use when the user says "omakase"
+  (alone or with options such as "omakase preview", "omakase init",
+  "omakase fix as a draft"), "open a PR", "create a PR", "make a pull
+  request", or invokes /omakase-pr.
 ---
 
 # omakase-pr
 
 GitHub lets a repo have several PR templates but gives no way to pick one.
-You pick it for the user, fill it in from the actual change, and open the PR
-with `gh pr create`. Everything else is plain `gh`.
+You pick it for the user, fill it in from the actual change, set the
+assignee and labels, and open the PR with `gh pr create`.
 
-## Files in the repo
+You do not run git commands that change anything: no commits, pushes,
+branches, or rebases. The user commits and pushes; you open the PR.
 
-- `.github/omakase-pr.yml`: which prefixes map to which kind, and the PR
-  fields to set. Everything except `kinds` is optional and empty by default.
+## Commands
 
-  ```yaml
-  # kind: prefixes matched against branch names and commit subjects
-  kinds:
-    feature: [feat, feature]
-    fix: [fix, bugfix, hotfix]
-    refactor: [refactor]
-    docs: [docs]
-    chore: [chore, ci, build, deps]
+- `omakase`: open a PR. See "Open a PR".
+- `omakase preview`: show the PR without creating it. See "Preview".
+- `omakase init`: save a config for this repo, plus templates if the repo
+  has none. See "Init".
 
-  # Optional. Uncomment to set these on every PR.
-  # assignees: ["@me"]
-  # labels:          # kind: labels
-  #   feature: [enhancement]
-  #   fix: [bug]
-  # projects: [Roadmap]
-  # milestone: v1.2
-  ```
+Anything else the user says is an option for this PR, in plain words: a
+kind ("omakase fix"), a draft, reviewers, extra labels, a base branch.
+Their words win over the config.
 
-- `.github/PULL_REQUEST_TEMPLATE/<kind>.md`: one template per kind. The file
-  name is the kind.
+## Config
 
-If `.github/omakase-pr.yml` is missing, run setup first, then continue with
-the PR the user asked for. In preview, do not run setup: use the default
-prefixes and this skill's templates, and say that setup has not run yet.
+`.github/omakase-pr.yml` is optional. Without it, use these defaults:
 
-## Setup (`omakase init`, or first use)
+```yaml
+# kind: prefixes matched against branch names and commit subjects.
+# If the repo has several templates, each kind is a template file name.
+kinds:
+  feature: [feat, feature]
+  fix: [fix, bugfix, hotfix]
+  refactor: [refactor]
+  docs: [docs]
+  chore: [chore, ci, build, deps]
 
-1. **Learn the repo's habits.** Look at recent branch names
-   (`gh pr list --state merged --limit 50 --json headRefName,title` if
-   available, otherwise `git branch -r`) and commit subjects
-   (`git log --format=%s -100`). Collect the prefixes actually in use, such as
-   `feat/`, `fix-`, `fix:`, `[Bug]`.
-2. **Propose the prefix config.** Start from the default above, add prefixes
-   found in step 1 to the matching kind, and add a new kind only if the repo
-   clearly uses one (for example `perf` or `release`). Include the optional
-   fields commented out, exactly as shown above, so the user can find them.
-   Do not fill them in. Show the file to the user and apply their edits.
-3. **Generate templates**, one per kind:
-   - If the repo has templates in `.github/PULL_REQUEST_TEMPLATE/`, keep them
-     and map each to a kind. Only create the missing ones.
-   - If it has a single `pull_request_template.md` (any letter case, in
-     `.github/`, `docs/`, or the repo root), treat its sections as house
-     style: keep them in every kind's template, and add the kind-specific
-     sections from this skill's `templates/` directory.
-   - If it has none, copy this skill's default templates. For a kind with
-     no default, write a short template with What, Why, and Testing.
-   - Pick the language from the existing templates, recent PR titles and
-     bodies, and commit subjects. If they are mostly Japanese, use
-     `templates/ja/<kind>.md`; otherwise use `templates/<kind>.md` (English).
-     For another language, translate the English defaults. If the user names
-     a language, use that.
-4. **Write the files** and show the user the list. Do not commit unless they
-   ask. Leave any existing single template in place; the GitHub web UI still
-   uses it.
+assignees: ["@me"]
+labels:            # kind: labels, chosen from the repo's existing labels
+  feature: [enhancement]
+  fix: [bug]
+  docs: [documentation]
 
-When setup runs as part of opening a PR, the files it writes stay out of
-that PR. Leave them uncommitted, never add them to the PR's commits, and tell
-the user they can commit them separately.
+# Optional. Uncomment to set these on every PR.
+# projects: [Roadmap]
+# milestone: v1.2
+```
+
+Use a default label only if the repo has it (`gh label list --json name`).
+
+## Find the template
+
+Check in this order and use the first that matches. Never edit what you
+find.
+
+1. **Several templates**: a `PULL_REQUEST_TEMPLATE/` directory in
+   `.github/`, `docs/`, or the repo root. Each file name, without the
+   extension, is a kind. For a kind with no file of its name, use the
+   template whose name fits it (`bug_report.md` for fix); if none does,
+   the single template from 2; if there is none, the closest one.
+2. **One template**: `pull_request_template.md` in the same three places.
+   Use it for every kind. The kind still sets the title prefix and labels.
+3. **The owner's shared templates**: the same files in the `<owner>/.github`
+   repository, read with `gh api repos/<owner>/.github/contents/<path>`.
+   Use them as in 1 or 2. Read them each time; never copy them into the
+   repo.
+4. **None**: this skill's `templates/<kind>.md`. If recent PR titles and
+   bodies and commit subjects are mostly Japanese, use
+   `templates/ja/<kind>.md`. For another language, translate the English
+   ones. If the user names a language, use that. For a kind with no
+   default, use What, Why, and Testing sections.
+
+Match file names in any letter case, with `.md` or `.txt`.
 
 ## Open a PR
 
-1. **Check the branch.**
-   - If a PR already exists for this branch (`gh pr view --json url`), do not
-     create another. Ask whether to update its title and body instead, and if
-     yes, use `gh pr edit` with the same title and body rules.
-   - If there are uncommitted changes other than files written by setup, ask
-     whether to commit them first.
-   - If the branch has no upstream, push it with `git push -u origin HEAD`.
-   - Base branch: the user's choice, else the repo's default branch
+1. **Check the branch.** Stop and tell the user why if:
+   - the current branch is the base branch. The base is the user's choice,
+     else the default branch
      (`gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`).
+   - the branch has no upstream, or `HEAD` differs from it
+     (`git rev-parse HEAD @{u}`). Ask the user to push; never push for them.
+   - an open PR already exists for this branch
+     (`gh pr view --json url,state`, with state `OPEN`). Give its URL.
+
+   Uncommitted changes are not in the PR; mention them in the report.
+   Then run `git fetch origin <base>`, and compare against `origin/<base>`
+   from here on, so commits already on the base are not counted.
 2. **Pick the kind,** stopping at the first that gives a clear answer:
    1. The kind the user named ("omakase fix").
    2. The branch name, matched against the prefixes.
-   3. The commit subjects on this branch (`git log <base>..HEAD --format=%s`),
-      matched against the prefixes. Use the kind most commits share.
-   4. The diff itself: only docs touched means docs; only dependency, CI, or
+   3. The commit subjects on this branch
+      (`git log origin/<base>..HEAD --format=%s`), matched against the
+      prefixes. Use the kind most commits share.
+   4. What the commit messages say the change does, in any language:
+      "Fix login timeout" and "ログインのタイムアウトを修正" are fixes.
+   5. The diff itself: only docs touched means docs; only dependency, CI, or
       config files means chore; if no public behavior changes and the tests
       are untouched, it is a refactor. Do not guess between feature and fix
       from the diff alone.
-   If it is still unclear, ask once, offering the two likeliest kinds.
-3. **Fill the template** from the diff (`git diff <base>...HEAD`) and the
-   commits:
+3. **Ask once, if needed.** If the kind is still unclear (offer the two
+   likeliest), or nothing says why the change was made (see "Body"), ask
+   in one message, and ask nothing else later.
+4. **Find the template** for the kind. See "Find the template".
+5. **Fill the template** from the commits (`git log origin/<base>..HEAD`)
+   and the diff. Start with `git diff --stat origin/<base>...HEAD`, then
+   read the diff, skipping lock files, generated files, and binaries.
    - Keep every heading and the order of the template.
    - Replace each `<!-- comment -->` with real content, or delete the section
      if the template says to delete it when it does not apply.
@@ -112,21 +123,26 @@ the user they can commit them separately.
      claims a result ("fails without this fix", "tests pass", "tested
      manually") needs a command you ran in this session, or the user saying
      so. Otherwise leave it unticked. Never claim testing that did not happen.
-   - Mention an issue only if its number appears in the branch name, commits,
-     or the user's message. Write it as a plain reference (`#123`), never with
-     a closing keyword (`Closes`, `Fixes`, `Resolves`).
+   - A section that applies but needs something you do not have, such as
+     screenshots of a UI change, keeps its comment. List it in the report.
+   - Mention an issue only if its number appears in the branch name,
+     commits, or the user's message, and `gh issue view <n> --json title`
+     shows it is about this change. A branch like `fix/node-18` has a number
+     that is not an issue. Write it as a plain reference (`#123`). Use a
+     closing keyword (`Closes`, `Fixes`, `Resolves`) only if the user asks.
    - Write in the language of the template, for a reviewer who has one
      minute. See "Body" under "Writing" below.
-4. **Write the title.** See "Title" under "Writing" below.
-5. **Create it:**
+6. **Write the title.** See "Title" under "Writing" below.
+7. **Create it:**
 
    ```sh
    gh pr create --base <base> --title "<title>" --body-file <tmp file>
    ```
 
-   Add PR fields from the config, then from the user's words for this PR.
-   The user's words win over the config. If neither sets a field, leave it
-   empty.
+   Add PR fields from the config, or the defaults, then from the user's
+   words for this PR. The user's words win. If `gh repo view --json
+   viewerPermission` is `READ`, as when opening a PR from a fork to a repo
+   you cannot write to, skip assignees, labels, projects, and milestone.
 
    | Field | Flag | From the config |
    | --- | --- | --- |
@@ -138,13 +154,62 @@ the user they can commit them separately.
    | Draft | `--draft` | (user's words only) |
 
    If a label, project, or milestone does not exist, `gh` fails. Before
-   retrying, run `gh pr view` to make sure no PR was created for this branch.
-   Then create it without that field and tell the user which one was skipped
-   and why.
+   retrying, run `gh pr view --json url,state` to make sure no open PR was
+   created for this branch. Then create it without that field and tell the
+   user which one was skipped and why.
    Adding to a project needs the `project` scope; if it is missing, suggest
    `gh auth refresh -s project`.
-6. **Report** the PR URL, the kind chosen, and why (for example: "fix, from
-   the branch name fix/login-timeout"), in one or two lines.
+8. **Report** in a few lines: the PR URL; the kind and why (for example:
+   "fix, from the branch name fix/login-timeout"); the fields set; and
+   anything left for the user, such as boxes only they can tick, sections
+   left with a comment, skipped fields, and uncommitted changes. Without a
+   config, add that `omakase init` saves the settings for this repo.
+
+## Preview (`omakase preview`)
+
+Do steps 1-6 of "Open a PR" without asking anything or creating anything.
+If a check in step 1 would stop the PR, say so instead of stopping. Where
+step 3 would ask, use the likeliest kind and leave a TODO for the reason
+(see "Body"), and say so. Show the kind and why, the title, the fields that
+would be set, and the filled body.
+
+If the user then asks to create it, create exactly what you showed, with
+the changes they ask for; do not write it again. First run step 1's checks
+again, and ask for anything the preview left as a TODO.
+
+## Init (`omakase init`)
+
+1. **Find the templates** as in "Find the template".
+2. **Learn the repo's habits.** Look at recent merged PRs
+   (`gh pr list --state merged --limit 50 --json headRefName,title,labels`)
+   and commit subjects (`git log --format=%s -100`). Collect the prefixes
+   actually in use, such as `feat/`, `fix-`, `fix:`, `[Bug]`, and the labels
+   each kind of PR carries.
+3. **Propose the config.**
+   - `kinds`: if you found several templates, one kind per template file,
+     with each prefix assigned to the template that fits it best.
+     Otherwise, start from the defaults, add the prefixes found in step 2
+     to the matching kind, and add a kind only if the repo clearly uses one
+     (for example `perf` or `release`).
+   - `assignees`: `["@me"]`.
+   - `labels`: for each kind, labels from
+     `gh label list --json name,description` that describe that kind of
+     change, by name (`bug` for fix) or because most merged PRs of that kind
+     carry them. Leave out a kind that nothing fits. Never create labels.
+   - `projects` and `milestone`: commented out, exactly as in "Config".
+
+   Show the file and apply the user's edits. If a config already exists,
+   show it next to the proposal, and overwrite it only if the user agrees.
+4. **Write the files**, and show the user the list. Do not commit.
+   - The config.
+   - If the repo has no templates (4 in "Find the template"), this skill's
+     templates for each kind in `.github/PULL_REQUEST_TEMPLATE/`, so the
+     team can edit them.
+   - If the repo has one template and the user asks to split it by kind,
+     write one template per kind in `.github/PULL_REQUEST_TEMPLATE/`. Each
+     keeps the existing template's sections and adds the kind's sections
+     from this skill's templates. Leave the existing template in place;
+     the GitHub web UI still uses it.
 
 ## Writing
 
@@ -162,8 +227,10 @@ this PR changes, so they can tell it apart from every other PR.
   including any prefix.
 - Follow the repo's style from recent merged PR titles: prefix (`fix:`,
   `[Fix]`), capitalization, and mood. With no history, use the
-  conventional-commit form `<kind>: <summary>` in the imperative
-  ("add", not "added"). No trailing period.
+  conventional-commit form `<type>: <summary>` in the imperative
+  ("add", not "added"), with the type that fits the change (`feat`,
+  `fix`, `refactor`, `docs`, `chore`), even if the kind is named after a
+  template like `bug_report`. No trailing period.
 - Do not copy a commit subject blindly. With several commits, summarize the
   whole branch.
 
@@ -187,20 +254,15 @@ give them the point and where to look, not retell the diff.
   was made (Why, Background, Motivation, 背景, 理由, 目的) must come from an
   issue, commit messages, code comments, or the user. What was broken can be
   read from the diff and tests; why the change was wanted cannot. If none of
-  them say it, ask the user once in one line before creating the PR. In
-  preview, leave `<!-- TODO: why -->` in that section and say so.
+  them say it, ask (step 3 of "Open a PR"). In preview, leave
+  `<!-- TODO: why -->` in that section and say so.
 
 Before showing or creating the PR, reread the title and body once and cut
 anything a reviewer would not miss.
 
-## Preview (`omakase preview`)
-
-Do steps 1-4 of "Open a PR", but do not push or create anything. Show the
-kind, the reason, the title, the PR fields that would be set, and the filled
-body.
-
 ## Never
 
 - Never invent test results, issue numbers, screenshots, or reviewers.
-- Never overwrite an existing template without asking.
-- Never force-push, and never commit changes the user did not ask to commit.
+- Never edit the repo's templates, and never create labels, projects, or
+  milestones.
+- Never commit, push, or create branches.
